@@ -86,7 +86,6 @@ public class Prnt {
 			if (child == null) {
 				printOffset(rowOffset, colOffset, msg);
 			} else {
-				child.
 			}
 		}
 	}
