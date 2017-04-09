@@ -1,9 +1,9 @@
 package com.gaborbiro.puzzle;
 
 import java.awt.GraphicsEnvironment;
-import java.io.Console;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +12,18 @@ import com.gaborbiro.puzzle.ProblemPermutator.Callback;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, InterruptedException, URISyntaxException {
+		if (Prntr.isAppRunningFromJar && System.console() == null && !GraphicsEnvironment.isHeadless()) {
+			String filename = Main.class.getProtectionDomain().getCodeSource().getLocation().toString().substring(6);
+			Runtime.getRuntime()
+					.exec(new String[] { "cmd", "/c", "start", "cmd", "/k", "java -jar \"" + filename + "\"" });
+		} else {
+			work();
+			System.out.println("Program has ended, please type 'exit' to close the console");
+		}
+	}
+
+	public static void work() {
 		FileInputStream fio = null;
 		Puzzle puzzle = null;
 		try {
@@ -32,11 +43,6 @@ public class Main {
 		Blob.markedPrintDelegate = new MergingPrintDelegate<Character>() {
 
 			@Override
-			public Character getRawValue(Blob<Character> blob) {
-				return Character.toUpperCase(super.getRawValue(blob));
-			}
-
-			@Override
 			public String print(Blob<Character> blob) {
 				return Prntr.BG.WHITE.apply(getRawValue(blob));
 			}
@@ -51,6 +57,7 @@ public class Main {
 	private static void print(Puzzle puzzle) {
 		char escCode = 0x1B;
 		Prntr.out.print(String.format("%c[%d;%df", escCode, 3, 0));
+		Prntr.out.println(" 01234567890123456789");
 		Prntr.out.println(puzzle);
 	}
 
@@ -74,13 +81,13 @@ public class Main {
 
 		private void updatePath(int[] solution, int index) {
 			if (solution[index] >= 0) {
-				Point[] neighbours = puzzle.getNeighbours(path.get(path.size() - 1), true);
+				Point[] neighbours = puzzle.getNeighbours(path.get(index), true);
 
 				if (solution[index] < neighbours.length) {
 					Point nextCandidateStep = neighbours[solution[index]];
 					if (path.size() > index + 1) {
 						path.set(index + 1, nextCandidateStep);
-						while (path.size() > index + 2) {
+						while (path.size() > index + 1) {
 							path.remove(path.size() - 1);
 						}
 					} else {
@@ -93,6 +100,16 @@ public class Main {
 		@Override
 		public boolean isCandidate(int[] candidate, int index) {
 			updatePath(candidate, index);
+			if (index > 0) {
+				Point cand = puzzle.getCenter(path.get(index + 1));
+				Point p1 = puzzle.getCenter(path.get(index));
+				Point p2 = puzzle.getCenter(path.get(index - 1));
+				int rD = cand.row - p1.row;
+				int cD = cand.col - p1.col;
+				
+				return puzzle.getValue(Point.get(p1.row + p1.row - p2.row, p1.col + p1.col - p2.col)) == null || 
+						Point.get(p1.row - rD, p1.col - cD).equals(p2);
+			}
 			return true;
 		}
 

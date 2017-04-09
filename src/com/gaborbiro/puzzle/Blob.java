@@ -23,19 +23,6 @@ public class Blob<T> {
 
 	}
 
-	// public static class SimplePrintDelegate implements PrintDelegate {
-	//
-	// @Override
-	// public Object getRawValue(Blob blob) {
-	// return blob;
-	// }
-	//
-	// @Override
-	// public String print(Blob blob, Object value) {
-	// return value.toString();
-	// }
-	// }
-
 	public static class MergingPrintDelegate<T> implements PrintDelegate<T> {
 
 		@Override
@@ -46,7 +33,6 @@ public class Blob<T> {
 		@Override
 		public String print(Blob<T> blob) {
 			return blob.bg.apply(getRawValue(blob));
-			// return blob.points.size() > 1 ? toPrint : value.toString();
 		}
 	}
 

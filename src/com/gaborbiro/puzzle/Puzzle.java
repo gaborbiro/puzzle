@@ -144,7 +144,12 @@ public class Puzzle {
 	 * Multiple nodes may have the same value.
 	 */
 	public Character getValue(Point p) {
-		return matrix.get(p.row).get(p.col).value;
+		if (p.row >= 0 && p.row < matrix.size() && p.col >= 0 && p.col < matrix.get(p.row).size()) {
+			Blob<Character> b = matrix.get(p.row).get(p.col);
+			return b != null ? b.value : null;
+		} else {
+			return null;
+		}
 	}
 
 	public void markAsVisited(boolean visited, Point p) {
@@ -162,11 +167,23 @@ public class Puzzle {
 		return result.toArray(new Point[result.size()]);
 	}
 
+	public Point getCenter(Point target) {
+		Blob<Character> b = matrix.get(target.row).get(target.col);
+		int rowSum = 0, colSum = 0;
+
+		for (Point p : b.points) {
+			rowSum += p.row;
+			colSum += p.col;
+		}
+		return Point.get(rowSum / b.points.size(), colSum / b.points.size());
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 
 		for (int row = 0; row < matrix.size(); row++) {
+			buffer.append(row % 10);
 			for (int col = 0; col < matrix.get(row).size(); col++) {
 				if (matrix.get(row).get(col) != null) {
 					buffer.append(matrix.get(row).get(col).toColoredString());
