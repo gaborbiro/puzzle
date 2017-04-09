@@ -1,9 +1,9 @@
-    aabbaabbaa
-   ccddccddccdd
+    aabb
+   cc  ccddccdd
   aabbaabbaabbaa
- ccddccddccddccdd
+ ccddccddccdd  dd
 aabbaabbaabbaabbaa
  ccddccddccddccdd
   aabbaabbaabbaa
-   ccddccddccdd
-    aabbaabbaa
+   ccddccdd
+    aabb  bbaa

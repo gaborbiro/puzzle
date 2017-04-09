@@ -115,7 +115,7 @@ public class Main {
 
 		@Override
 		public boolean isSolution(int[] solution, int index) {
-			return index == 50;
+			return index == 52;
 		}
 
 		@Override
@@ -147,7 +147,7 @@ public class Main {
 					public void run() {
 						print(puzzle);
 						try {
-							Thread.currentThread().sleep(50);
+							Thread.currentThread().sleep(60);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
