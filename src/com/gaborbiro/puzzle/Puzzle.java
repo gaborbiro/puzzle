@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import com.gaborbiro.puzzle.Blob.PrintDelegate;
-
 /**
  * Reads and turns into a 2D graph inputs like this:
  * 
@@ -28,14 +26,6 @@ import com.gaborbiro.puzzle.Blob.PrintDelegate;
  * easily be modified to include diagonal adjacency as well).<br>
  */
 public class Puzzle {
-
-	private PrintDelegate markedPrintDelegate = new Blob.MergingPrintDelegate<Character>() {
-
-		@Override
-		protected Character getRawValue(Blob<Character> blob) {
-			return Character.toUpperCase(super.getRawValue(blob));
-		}
-	};
 
 	private List<List<Blob<Character>>> matrix;
 	private int width;
@@ -149,19 +139,25 @@ public class Puzzle {
 		return width;
 	}
 
+	/**
+	 * Note: don't use this return value to identify nodes. It's just the value.
+	 * Multiple nodes may have the same value.
+	 */
 	public Character getValue(Point p) {
 		return matrix.get(p.row).get(p.col).value;
 	}
 
 	public void markAsVisited(boolean visited, Point p) {
-		matrix.get(p.row).get(p.col).setPrivatePrintDelegate(visited ? markedPrintDelegate : null);
+		matrix.get(p.row).get(p.col).marked = visited;
 	}
 
-	public Point[] getNeighbours(Point p) {
+	public Point[] getNeighbours(Point p, boolean unvisited) {
 		Map<Blob<Character>, List<Point>> neighbours = matrix.get(p.row).get(p.col).neighbours;
 		List<Point> result = new ArrayList<>();
-		for (List<Point> points : neighbours.values()) {
-			result.addAll(points);
+		for (Blob<Character> blob : neighbours.keySet()) {
+			if (!unvisited || !blob.marked) {
+				result.addAll(neighbours.get(blob));
+			}
 		}
 		return result.toArray(new Point[result.size()]);
 	}

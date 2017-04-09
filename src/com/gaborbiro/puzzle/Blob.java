@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import com.gaborbiro.puzzle.Utils.BG;
+import com.gaborbiro.puzzle.Prntr.BG;
 
 /**
  * Class holding a group of adjacent {@code Points}, all having the same value.
@@ -14,47 +14,59 @@ import com.gaborbiro.puzzle.Utils.BG;
 public class Blob<T> {
 
 	static interface PrintDelegate<T> {
+		T getRawValue(Blob<T> blob);
+
 		String print(Blob<T> blob);
 	}
 
-	public static class SimplePrintDelegate implements PrintDelegate {
+	static abstract class JCDPPrintDelegate<T> implements PrintDelegate<T> {
 
-		@Override
-		public String print(Blob blob) {
-			return blob.value.toString();
-		}
 	}
+
+	// public static class SimplePrintDelegate implements PrintDelegate {
+	//
+	// @Override
+	// public Object getRawValue(Blob blob) {
+	// return blob;
+	// }
+	//
+	// @Override
+	// public String print(Blob blob, Object value) {
+	// return value.toString();
+	// }
+	// }
 
 	public static class MergingPrintDelegate<T> implements PrintDelegate<T> {
 
 		@Override
-		public String print(Blob<T> blob) {
-			T value = getRawValue(blob);
-			String toPrint = blob.bg.apply(value);
-			return blob.points.size() > 1 ? toPrint : value.toString();
+		public T getRawValue(Blob<T> blob) {
+			return blob.value;
 		}
 
-		protected T getRawValue(Blob<T> blob) {
-			return blob.value;
+		@Override
+		public String print(Blob<T> blob) {
+			return blob.bg.apply(getRawValue(blob));
+			// return blob.points.size() > 1 ? toPrint : value.toString();
 		}
 	}
 
-	public static PrintDelegate printDelegate = new SimplePrintDelegate();
+	public static PrintDelegate markedPrintDelegate;
+
+	public static PrintDelegate printDelegate = new MergingPrintDelegate();
 
 	private static int counter = 0;
 
 	List<Point> points = new ArrayList<>();
 	T value;
-	boolean visited;
+	boolean marked;
 	Map<Blob<T>, List<Point>> neighbours = new WeakHashMap<>();
 	int id;
 	BG bg;
-	PrintDelegate<T> privatePrintDelegate;
 
 	public Blob(T value, int row, int col) {
 		points.add(Point.get(row, col));
 		this.value = value;
-		bg = BG.BG_WHITE;
+		bg = BG.BLUE;
 		id = counter++;
 	}
 
@@ -77,20 +89,19 @@ public class Blob<T> {
 
 	public void nextColor() {
 		bg = BG.values()[counter++ % BG.values().length];
-	}
 
-	public void setPrivatePrintDelegate(PrintDelegate<T> privatePrintDelegate) {
-		this.privatePrintDelegate = privatePrintDelegate;
+		if (bg == BG.WHITE) {
+			nextColor();
+		}
 	}
 
 	@Override
 	public String toString() {
-		return "(" + value + ":" + points + ")";
+		return "(" + value + (marked ? ":v" : "") + ":" + points + ")";
 	}
 
 	public String toColoredString() {
-		return privatePrintDelegate != null ? privatePrintDelegate.print(this)
-				: (printDelegate != null ? printDelegate.print(this) : value.toString());
-		// return "|" + id + "|";
+		PrintDelegate<T> delegate = marked && markedPrintDelegate != null ? markedPrintDelegate : printDelegate;
+		return delegate.print(this);
 	}
 }
