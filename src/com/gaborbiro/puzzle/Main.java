@@ -23,10 +23,11 @@ public class Main {
 			Runtime.getRuntime()
 					.exec(new String[] { "cmd", "/c", "start", "cmd", "/k", "java -jar \"" + filename + "\"" });
 		} else {
-			for (int i = 0; i < 50; i++) {
-				measure(args);
-			}
-			Printer.offset(18, 0).print("Average: " + (total / counter - 1) + "msec");
+			// for (int i = 0; i < 50; i++) {
+			measure(args);
+			// }
+			// Printer.offset(18, 0).print("Average: " + (total / counter - 1) +
+			// "msec");
 		}
 	}
 
@@ -67,7 +68,7 @@ public class Main {
 				return Printer.BG.WHITE.apply(getRawValue(blob));
 			}
 		};
-//		puzzlePrinter.print0(puzzle.toString());
+		puzzlePrinter.print0(puzzle.toString());
 
 		PuzzleFilter filter = new PuzzleFilter(puzzle, puzzle.getHeight() / 2, puzzle.getWidth() / 2, 52);
 		ProblemPermutator permutator = new ProblemPermutator(filter);
@@ -155,23 +156,23 @@ public class Main {
 		@Override
 		public void visit(int[] candidate, int index) {
 			puzzle.markAsVisited(true, path.get(index));
-			// puzzle.print(puzzlePrinter, path.get(index));
-			// try {
-			// Thread.currentThread().sleep(10);
-			// } catch (InterruptedException e) {
-			// e.printStackTrace();
-			// }
+			puzzle.print(puzzlePrinter, path.get(index));
+			try {
+				Thread.currentThread().sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override
 		public void unvisit(int[] candidate, int index) {
 			puzzle.markAsVisited(false, path.get(index));
-			// puzzle.print(puzzlePrinter, path.get(index));
-			// try {
-			// Thread.currentThread().sleep(10);
-			// } catch (InterruptedException e) {
-			// e.printStackTrace();
-			// }
+			puzzle.print(puzzlePrinter, path.get(index));
+			try {
+				Thread.currentThread().sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
