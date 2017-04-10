@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import com.gaborbiro.puzzle.Prntr.BG;
+import com.gaborbiro.puzzle.Printer.BG;
 
 /**
  * Class holding a group of adjacent {@code Points}, all having the same value.

@@ -32,22 +32,20 @@ public class ProblemPermutator {
 	}
 
 	private void exploreNode(int[] candidate, int index) {
+		callback.visit(candidate, index);
 		while (callback.hasMoreChildren(candidate, index)) {
 			nextChild(candidate, index);
 
 			if (callback.isCandidate(candidate, index)) {
-				if (!callback.isSolution(candidate, index)) {
-					callback.visit(candidate, index);
-					exploreNode(candidate, index + 1);
-					callback.unvisit(candidate, index);
-					candidate[index + 1] = EMPTY;
-				} else {
+				if (callback.isSolution(candidate, index)) {
 					callback.solution(candidate, index);
-					System.exit(0);
 				}
+				exploreNode(candidate, index + 1);
+				candidate[index + 1] = EMPTY;
 			}
 			Thread.currentThread().yield();
 		}
+		callback.unvisit(candidate, index);
 	}
 
 	private void nextChild(int[] solution, int index) {

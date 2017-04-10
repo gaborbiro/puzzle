@@ -4,7 +4,7 @@ import java.io.PrintStream;
 
 import org.fusesource.jansi.AnsiConsole;
 
-public class Prnt {
+public class Printer {
 	// public static enum C {
 	// BLACK ("\u001B[30m\u001B[1m\u001B[0m", FColor.BLACK),
 	// RED ("\u001B[31m\u001B[1m\u001B[0m", FColor.RED),
@@ -65,28 +65,40 @@ public class Prnt {
 	}
 
 	public static Offset offset(int row, int col) {
-		return new Offset(row, col);
+		return new Offset(row, col, 1);
 	}
 
 	public static class Offset {
 		private int rowOffset;
 		private int colOffset;
-		private Offset child;
+		private int counter = 0;
+		private int step;
 
-		public Offset(int rowOffset, int colOffset) {
+		public Offset(int rowOffset, int colOffset, int step) {
 			this.rowOffset = rowOffset;
 			this.colOffset = colOffset;
+			this.step = step;
 		}
 
-		private static void print(int row, int col, String msg) {
-			
+		public Offset offset(int row, int col) {
+			return new Offset(rowOffset + row, colOffset + col, 1);
 		}
 
+		public Offset offset(int row, int col, int step) {
+			return new Offset(rowOffset + row, colOffset + col, step);
+		}
+		
 		void print(String msg) {
-			if (child == null) {
-				printOffset(rowOffset, colOffset, msg);
-			} else {
-			}
+			printOffset(rowOffset + counter, colOffset, msg);
+		}
+		
+		void print0(String msg) {
+			printOffset(rowOffset, colOffset, msg);
+		}
+		
+		void println(String msg) {
+			printOffset(rowOffset + counter, colOffset, msg);
+			counter += step;
 		}
 	}
 

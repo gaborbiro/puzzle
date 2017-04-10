@@ -1,0 +1,9 @@
+    aabb
+   cc  ccddccdd
+  aabbaabbaabbaa
+ ccddccddccdd  dd
+aabbaabbaabbaabbaa
+ ccddccddccddccdd
+  aabbaabbaabbaa
+   ccddccdd
+    aabb  bbaa
